@@ -1,0 +1,82 @@
+---
+title: 'Presenterm: 全新的markdown ppt工具'
+description: 'Presenterm 允许您创建 Markdown 格式的演示文稿，并从终端运行它们，并支持 图像和动画 GIF 支持、高度可定制的主题、代码高亮显示、将演示文稿导出为 PDF 格式、 以及许多其他功能。'
+date: '2025-03-29'
+---
+
+在很早之前使用过[slides](https://github.com/maaslalani/slides)，也是可以在终端创建 Markdown 格式的演示文稿。但是当时不支持图片，而且更新也不频繁了。最近发现了[presenterm](https://github.com/mfontanini/presenterm)，功能类似，但感觉比[slides](https://github.com/maaslalani/slides)功能更全。
+
+接下来介绍一下[presenterm](https://github.com/mfontanini/presenterm)如何使用。
+
+
+### 基本规则
+
+#### 介绍页幻灯片
+
+介绍页幻灯片可以设置 **标题**、**副标题**、**作者**和 **其他** 有关演示文稿的元数据
+
+```markdown
+---
+title: 介绍 **presenterm**
+sub_title: 允许您创建 Markdown 格式的演示文稿，并从终端运行它们，并支持 图像和动画 GIF 支持、高度可定制的主题、代码高亮显示、将演示文稿导出为 PDF 格式、 以及许多其他功能。
+author: Carlos
+---
+```
+
+多个作者可以这样添加：
+
+```markdown
+---
+title: 介绍 **presenterm**
+sub_title: 允许您创建 Markdown 格式的演示文稿，并从终端运行它们，并支持 图像和动画 GIF 支持、高度可定制的主题、代码高亮显示、将演示文稿导出为 PDF 格式、 以及许多其他功能。
+authors:
+  - Carlos
+  - John
+---
+```
+
+#### 幻灯片header
+
+可以通过下面的方式设置单个页面的header
+
+```markdown
+Header
+---
+```
+
+如果想在单个页面中设置header，这个header会居中显示，同时会在上下有一些padding。
+
+```markdown
+页面中的header
+===
+```
+
+#### 幻灯片分割标识
+
+```markdown
+<!-- end_slide -->
+```
+
+
+
+#### 文字颜色
+
+可以使用`span`标签的`style`属性来设置文字颜色。颜色可以通过 theme 配置。
+
+```html
+<span style="color: blue; background-color: palette:foo">colored text!</span>
+```
+
+> 注意只支持`span`标签
+
+#### 快捷键
+
+* 跳到第一页: `gg`
+* 跳到最后一页: `G`
+* 跳到某一页: `<n>G`
+* 退出演示: `<ctrl>c`
+
+
+#### 目录Modal
+
+`<ctrl>p` 可以显示目录Modal
