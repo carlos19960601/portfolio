@@ -5,7 +5,7 @@ author: Carlos
 ---
 
 Customizability
----
+---w
 
 _presenterm_ allows configuring almost anything about your presentation:
 

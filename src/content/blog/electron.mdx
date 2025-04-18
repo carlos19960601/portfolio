@@ -11,3 +11,15 @@ date: '2025-03-29'
 ```shell
 node node_modules/electron/install.js
 ```
+
+但是如果这样运行，下载会很缓慢，甚至可能下载失败。即使使用了Proxy。
+
+```shell
+export https_proxy=http://127.0.0.1:7897 http_proxy=http://127.0.0.1:7897 all_proxy=socks5://127.0.0.1:7897
+```
+
+除了上面的代理外，还需要设置`ELECTRON_GET_USE_PROXY`
+
+```shell
+export ELECTRON_GET_USE_PROXY=http://127.0.0.1:7897
+```
