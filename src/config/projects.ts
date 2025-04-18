@@ -28,15 +28,16 @@ export const projects: Array<ProjectItemType> = [
     tags: ['App', 'iOS', "Android"],
     logo: '/images/icon/mempal-app-logo.png',
   },
-  // {
-  //   name: 'SEO Explore',
-  //   description:
-  //     'Explore all the best SEO tools in one place.',
-  //   link: { href: 'seoexplore.com', label: 'SEO Explore' },
-  //   category: ['Website'],
-  //   techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
-  //   tags: ['SEO']
-  // },
+  {
+    name: 'ChronoWave',
+    description:
+      '一款根据实时热榜生成报纸和播客的应用',
+    link: { href: 'seoexplore.com', label: 'SEO Explore' },
+    category: ['Website'],
+    techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
+    tags: ['Podcast', "Wews"],
+    logo: '/images/icon/mempal-app-logo.png',
+  },
   // {
   //   name: 'GitHub Cards',
   //   description:
@@ -116,14 +117,14 @@ export const githubProjects: Array<ProjectItemType> = [
     gitStars: 1,
     gitForks: 1
   },
-  // {
-  //   name: 'Corey Chiu Portfolio Template',
-  //   description:
-  //     'portfolio template by corey chiu',
-  //   link: { href: 'github.com/iAmCorey/coreychiu-portfolio-template', label: 'Corey Chiu Portfolio Template' },
-  //   gitStars: 229,
-  //   gitForks: 30
-  // },
+  {
+    name: 'TrPlayer',
+    description:
+      '一款使用whisper和Ollama实现视频转录和翻译的播放器',
+    link: { href: 'github.com/carlos19960601/trplayer', label: 'Player' },
+    gitStars: 1,
+    gitForks: 1
+  },
   // {
   //   name: 'Chrome Extension Plasmo Template',
   //   description:
