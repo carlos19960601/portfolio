@@ -7,7 +7,7 @@ import { Favicon } from 'favicon-stealer'
 import Link from 'next/link'
 
 export function BookmarkCard({ bookmark }: { bookmark: BookmarkItemType }) {
-   const utmLink = `https://${bookmark.url}?utm_source=${utm_source}`
+   const utmLink = `${bookmark.url}?utm_source=${utm_source}`
 
   return (
     <li className="group relative flex h-full flex-col items-start">

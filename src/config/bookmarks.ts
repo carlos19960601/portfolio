@@ -20,3 +20,14 @@ export const uiComponents: Array<BookmarkItemType> = [
   }
 ]
 
+
+// Navigation Station
+export const navigationStations: Array<BookmarkItemType> = [
+  {
+    name: "IndieHub Tools",
+    logo: "https://indiehub.best/logo.png",
+    url: "https://indiehub.best/tool",
+    description: "Discover 400+ best tools for efficient indie hacking, from Domain, Database, Design, to Template, CMS, Marketing, etc."
+  }
+]
+
