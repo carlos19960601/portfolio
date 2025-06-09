@@ -84,6 +84,7 @@ export default async function Home() {
             ))}
           </ul>
         </div>
+        {/* blogs */}
         <div className="mx-auto my-8 flex max-w-xl flex-col gap-6 border-t border-muted py-8 lg:max-w-none">
           <h2 className="text-3xl font-semibold tracking-tight opacity-80 md:text-5xl">
             {blogHeadLine}
