@@ -1,5 +1,5 @@
 // projects
-export const projectHeadLine = "What I've done and what I'm doing."
+export const projectHeadLine = "What I've done, what I'm doing and what I'm learning"
 export const projectIntro = "I've worked on a variety of projects, from simple websites to complex web applications. And many of them are open-source. Here are a few of my favorites."
 
 export type ProjectItemType = {
@@ -164,4 +164,29 @@ export const githubProjects: Array<ProjectItemType> = [
   //   link: { href: 'github.com/iAmCorey/Cantonese-Echoes', label: 'Cantonese Echoes' },
   //   gitStars: 1
   // },
+]
+
+
+export const awesomeProjects: Array<ProjectItemType> = [
+  {
+    name: 'everyone-can-use-english',
+    description: '人人都能用英语',
+    link: { href: 'https://github.com/ZuodaoTech/everyone-can-use-english', label: 'English' },
+    gitStars: 26300,
+    gitForks: 3900
+  },
+  {
+    name: 'zola',
+    description: 'Open chat interface for all your models.',
+    link: { href: "https://github.com/ibelick/zola", label: "ChatBot" },
+    gitStars: 822,
+    gitForks: 134
+  },
+  {
+    name: 'deepchat',
+    description: '🐬DeepChat - A smart assistant that connects powerful AI to your personal world',
+    link: { href: "https://github.com/ThinkInAIXYZ/deepchat", label: "ChatBot" },
+    gitStars: 3500,
+    gitForks: 433
+  }
 ]
