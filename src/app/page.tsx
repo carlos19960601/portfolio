@@ -25,7 +25,6 @@ import Link from 'next/link'
 
 export default async function Home() {
   let blogList = (await getAllBlogs()).slice(0, 4)
-  // console.log('blogList: ', blogList)
 
   return (
     <>

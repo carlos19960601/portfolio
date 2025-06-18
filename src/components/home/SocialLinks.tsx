@@ -1,10 +1,10 @@
 "use client"
 
+import { CustomIcon } from '@/components/shared/CustomIcon'
 import { email, socialLinks } from '@/config/infoConfig'
 import { utm_source } from '@/config/siteConfig'
-import Link from 'next/link'
-import { CustomIcon } from '@/components/shared/CustomIcon'
 import { cn } from '@/lib/utils'
+import Link from 'next/link'
 
 export default function SocialLinks({ className }: { className?: string }) {
     return (

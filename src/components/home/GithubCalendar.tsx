@@ -1,7 +1,7 @@
 'use client'
 
-import GitHubCalendar from 'react-github-calendar'
 import { githubUsername } from '@/config/infoConfig'
+import GitHubCalendar from 'react-github-calendar'
 
 
 export default function GithubContributions() {

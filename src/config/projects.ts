@@ -32,10 +32,10 @@ export const projects: Array<ProjectItemType> = [
     name: 'ChronoWave',
     description:
       '一款根据实时热榜生成报纸和播客的应用',
-    link: { href: 'seoexplore.com', label: 'SEO Explore' },
+    link: { href: '#', label: 'ChronoWave' },
     category: ['Website'],
     techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
-    tags: ['Podcast', "Wews"],
+    tags: [],
     logo: '/images/icon/mempal-app-logo.png',
   },
   // {
