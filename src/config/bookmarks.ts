@@ -5,7 +5,7 @@ export const bookmarkIntro = "I often come across some tools that can assist us 
 
 export type BookmarkItemType = {
   name: string;
-  logo: string;
+  logo?: string;
   url: string;
   description: string;
 }
@@ -46,6 +46,11 @@ export const navigationStations: Array<BookmarkItemType> = [
     logo: "https://indiehub.best/logo.png",
     url: "https://indiehub.best/tool",
     description: "Discover 400+ best tools for efficient indie hacking, from Domain, Database, Design, to Template, CMS, Marketing, etc."
+  },
+  {
+    name: "FMHY",
+    url: "https://fmhy.net",
+    description: "The largest collection of free stuff on the internet!"
   }
 ]
 
@@ -56,6 +61,17 @@ export const developerTools: Array<BookmarkItemType> = [
     logo: "https://grep.app/icon.png",
     url: "https://grep.app",
     description: "Effortlessly search for code, files, and paths across a million GitHub repositories."
+  },
+  {
+    name: "Map of GitHub",
+    logo: "https://anvaka.github.io/map-of-github/favicon-32x32.png",
+    url: "https://anvaka.github.io/map-of-github/",
+    description: "This is a map of 690,000+ GitHub projects. Each dot is a project. Dots are close to each other if they have a lot of common stargazers."
+  },
+  {
+    name: "npm compare",
+    url: "https://npm-compare.com",
+    description: "Search for similar packages and compare them in terms of popularity, features, and discover popular alternatives.",
   }
 ]
 
