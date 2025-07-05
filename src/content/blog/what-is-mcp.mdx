@@ -1,0 +1,77 @@
+---
+title: 'MCP是什么'
+description: '介绍MCP(Model Context Protocol)'
+date: '2025-04-19'
+---
+
+MCP 是一种开放协议，它标准化了应用程序如何为 LLM 提供上下文。将 MCP 视为 AI 应用程序的 USB-C 端口。其
+General architecture如下：
+
+![](/images/blog/mcp-arc.png)
+
+* MCP Hosts: 表示使用MCP Client的程序，比如Claude Desktop，Cline、Cherry Studio、ChatWise等。
+* MCP 客户端：与服务器保持 1：1 连接的协议客户端
+* MCP 服务器：轻量级程序，每个程序都通过标准化的模型上下文协议公开特定功能
+
+通过这张图可以发现 MCP Hosts、MCP 客户端、MCP 服务器都是在你本地的计算机上。MCP Hosts会使用MCP 客户端，所以2者都是在你本地计算机上，但是MCP 服务器也同样在你的计算机上。以[Github MCP Server](https://github.com/github/github-mcp-server)为例子使用时，我们需要如下配置：
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>"
+      }
+    }
+  }
+}
+```
+
+配置中可以看到使用了`docker`运行了一个`github-mcp-server`的镜像，现在你可以理解为什么**MCP 服务器**也是运行在你的计算机上了吧。
+
+**MCP 服务器**其实就是一段运行在本地程序，所以它能够访问到你**本地数据源**，也可能web api的方式访问远程服务。
+
+
+### 为什么需要MCP?
+
+在了解了MCP整体架构之后，我们要来思考为什么需要MCP。在没有MCP之前，我们是用LLM的时候都是让它去回答一些通用的问题（也就是它在训练的时候学习到的知识）。但是在我们实际的使用中，我们有很具体的场景和数据，通用大模型是没有这个知识和数据的， 所以我们需要一种机制让LLM知道我们特有的知识。在MCP之前，我们是通过提供给它上下文，让它理解，然后再去让它回答问题，这种是最常见的。当然你也可以通过知识库，fine-tune大模型也能实现，但是门槛较高。普通人最常见的就是提供上下文信息。
+
+但是都是手动提供给大模型的，聪明的人类于是就开始思考是否可以让大模型自己根据我们的描述，自己去获取我们的上下文知识呢？于是就有了`function call`，`function call`提供了让大模型获取外部数据的能力。比如`web search`，我个人猜测现在像豆包、千问等都有个`联网搜索`的功能，是不是就是使用的`fucntion call`来实现的。
+
+现在有了`function call`似乎可以完成我们的需求了，但是你会发现，`function call`的内容还是需要我们自己去实现。这哪里能行呢？我就是想偷懒呢？还没开始使用，你就要我先去实现一大堆`function call`的内容。于是就出现了MCP。
+
+我理解MCP就是定义了LLM和外部数据进行交互的一种协议，现在MCP提供了很多MCP Server，我理解这就是我们之前要自己实现的`function call`的内容。有了MCP我们就可以在社区里面去找找有没有人已经实现了我们想要的`function call`。如果有就直接拿来用，没有呢，那也没办法，这个时候就需要按照mcp协议自己去实现一个mcp server。
+
+上面一大段就是我在看了一些MCP资料自己的理解，肯定有些地方理解有误。
+
+### 原理
+
+具体原理可以参考
+
+* [MCP (Model Context Protocol)，一篇就够了。](https://zhuanlan.zhihu.com/p/29001189476): 这篇文章从代码的方式分析了原理
+* [全网最细，一文带你弄懂 MCP 的核心原理！](https://zhuanlan.zhihu.com/p/1895815215712547750)： 这篇文章通过抓包的方式分析了Cherry Studio和Cline2个支持MCP的客户端发送请求的数据分析原理
+
+总结一下，MCP协议需要MCP server实现`list tools`接口，表示这个MCP server支持哪些tools。用户发出指令后，将配置的所有MCP server的`list tools`接口返回的数据聚合作为LLM可以使用的tools告诉给LLM，LLM根据它的理解来判断是否需要调用什么tool，如果不需要，就直接生成结果，如果需要，还要生成调用tool的参数，然后根据LLM返回的数据，使用MCP client调用相关的MCP server获取外部数据，然后再将返回的数据拼接到history message再次发送到LLM，LLM继续判断是否需要调用tool或生成最后结果，如此循环，直到获取到最后结果。
+
+### 实战
+
+TODO
+
+
+### 参考资料
+
+* [官方介绍](https://modelcontextprotocol.io/introduction)
+* [MCP (Model Context Protocol)，一篇就够了。](https://zhuanlan.zhihu.com/p/29001189476)
+* [全网最细，一文带你弄懂 MCP 的核心原理！](https://zhuanlan.zhihu.com/p/1895815215712547750)
+
+
+

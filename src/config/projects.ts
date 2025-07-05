@@ -39,9 +39,9 @@ export const projects: Array<ProjectItemType> = [
     logo: '/images/icon/mempal-app-logo.png',
   },
   // {
-  //   name: 'GitHub Cards',
+  //   name: '菜谱',
   //   description:
-  //     'Showcase your GitHub contributions into stunning visual cards.',
+  //     '从小红书上爬取菜谱做法，然后微调模型，App上传图片识别什么菜，然后让大模型返回菜谱',
   //   link: { href: 'github.cards', label: 'GitHub Cards' },
   //   category: ['Website'],
   //   techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
