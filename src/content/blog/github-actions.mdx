@@ -1,0 +1,76 @@
+---
+title: 'Github Actions入门'
+description: ''
+date: '2025-07-07'
+---
+
+### GitHub Actions 是什么？
+
+官方说`Github Actions`是集成和持续交付 (CI/CD) 平台。对此我粗浅的理解就是脚本合集(只是更高级)
+
+### 基本概念
+
+* workflow (工作流程)：持续集成一次运行的过程，就是一个 workflow。
+* job (任务)：一个 workflow 由一个或多个 jobs 构成，含义是一次持续集成的运行，可以完成多个任务。
+* step(步骤)：每个 job 由多个 step 构成，一步步完成。
+* action (动作)：每个 step 可以依次执行一个或多个命令(action)。
+
+语法参考: [工作流语法](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions)，接下来就是实战。
+
+内置变量参考： [Contexts](https://docs.github.com/zh/actions/reference/contexts-reference)
+
+### 实战
+
+#### on
+
+*workflow_dispatch* 代表手动触发
+
+```
+on: workflow_dispatch # 手动触发
+```
+
+必须在默认分支上才能[手动触发](https://docs.github.com/zh/actions/how-tos/managing-workflow-runs-and-deployments/managing-workflow-runs/manually-running-a-workflow)
+
+
+#### actions
+
+* [actions/checkout@v4](https://github.com/marketplace/actions/checkout):  理解就是git clone。
+* [actions/setup-node@v4](https://github.com/marketplace/actions/setup-node-js-environment): 准备node环境。
+* [actions/upload-artifact@v4](https://github.com/marketplace/actions/upload-a-build-artifact): 上传构建产物。
+
+
+### Example
+
+```yaml
+# 语法 https://docs.github.com/zh/actions/reference/workflow-syntax-for-github-actions
+name: Build App (macos-x64)
+on: workflow_dispatch # 手动触发
+
+jobs:
+  build:
+    runs-on: macos-13
+    steps: # 每个step运行在单独的进程中
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Make
+        run: pnpm run make
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TrPlayer-${{ runner.os }}-x64-build-${{ github.sha}}
+          path: out/make/**/*.dmg
+```
+
+### 相关链接
+
+* [官方市场](https://github.com/marketplace)
+* [工作流语法](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions)
+* [Contexts](https://docs.github.com/zh/actions/reference/contexts-reference)
