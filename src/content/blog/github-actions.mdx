@@ -10,10 +10,10 @@ date: '2025-07-07'
 
 ### 基本概念
 
-* workflow (工作流程)：持续集成一次运行的过程，就是一个 workflow。
-* job (任务)：一个 workflow 由一个或多个 jobs 构成，含义是一次持续集成的运行，可以完成多个任务。
-* step(步骤)：每个 job 由多个 step 构成，一步步完成。
-* action (动作)：每个 step 可以依次执行一个或多个命令(action)。
+- workflow (工作流程)：持续集成一次运行的过程，就是一个 workflow。
+- job (任务)：一个 workflow 由一个或多个 jobs 构成，含义是一次持续集成的运行，可以完成多个任务。
+- step(步骤)：每个 job 由多个 step 构成，一步步完成。
+- action (动作)：每个 step 可以依次执行一个或多个命令(action)。
 
 语法参考: [工作流语法](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions)，接下来就是实战。
 
@@ -23,7 +23,7 @@ date: '2025-07-07'
 
 #### on
 
-*workflow_dispatch* 代表手动触发
+**workflow_dispatch**: 代表手动触发
 
 ```
 on: workflow_dispatch # 手动触发
@@ -31,13 +31,45 @@ on: workflow_dispatch # 手动触发
 
 必须在默认分支上才能[手动触发](https://docs.github.com/zh/actions/how-tos/managing-workflow-runs-and-deployments/managing-workflow-runs/manually-running-a-workflow)
 
+**push**: 提交代码或者tag的时候触发
+
+还可以指定branch或tag
+
+```yaml
+on:
+  push:
+    branches:
+      - 'main'
+      - 'releases/**'
+```
+
+```yaml
+on:
+  push:
+    tags:
+      - v**
+```
+
+#### [jobs.<job_id>.strategy](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategy)
+
+**strategy** 可以让你通过一个作业定义，自动创建多个作业运行实例，每个实例使用不同的变量组合。
+
+主要用途：
+
+- 多环境测试：在不同的操作系统（如 Linux、Windows、macOS）上运行测试。
+- 多版本兼容性测试：在不同的编程语言版本（如 Node.js v14、v16、v18）上运行测试。
+- 矩阵构建：为不同的架构（如 amd64、arm64）构建 Docker 镜像。
+- 参数化测试：使用不同的输入参数运行测试。
+
+#### [jobs.<job_id>.permissions](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idpermissions)
+
+用于配置job的 `GITHUB_TOKEN` 的权限
 
 #### actions
 
-* [actions/checkout@v4](https://github.com/marketplace/actions/checkout):  理解就是git clone。
-* [actions/setup-node@v4](https://github.com/marketplace/actions/setup-node-js-environment): 准备node环境。
-* [actions/upload-artifact@v4](https://github.com/marketplace/actions/upload-a-build-artifact): 上传构建产物。
-
+- [actions/checkout@v4](https://github.com/marketplace/actions/checkout): 理解就是git clone。
+- [actions/setup-node@v4](https://github.com/marketplace/actions/setup-node-js-environment): 准备node环境。
+- [actions/upload-artifact@v4](https://github.com/marketplace/actions/upload-a-build-artifact): 上传构建产物。
 
 ### Example
 
@@ -61,7 +93,7 @@ jobs:
 
       - name: Make
         run: pnpm run make
-      
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -71,6 +103,6 @@ jobs:
 
 ### 相关链接
 
-* [官方市场](https://github.com/marketplace)
-* [工作流语法](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions)
-* [Contexts](https://docs.github.com/zh/actions/reference/contexts-reference)
+- [官方市场](https://github.com/marketplace)
+- [工作流语法](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions)
+- [Contexts](https://docs.github.com/zh/actions/reference/contexts-reference)
