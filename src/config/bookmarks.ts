@@ -35,6 +35,12 @@ export const uiComponents: Array<BookmarkItemType> = [
     logo: "https://reactbits.dev/favicon.ico",
     url: "https://reactbits.dev/",
     description: "Animated React components for creative developers"
+  },
+  {
+    name: "21st.dev",
+    logo: "https://21st.dev//brand/21st-logo-dark.svg",
+    url: "https://21st.dev",
+    description: "Discover and share video components. Ready-to-use React Tailwind components inspired by shadcn/ui."
   }
 ]
 

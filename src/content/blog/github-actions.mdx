@@ -50,7 +50,7 @@ on:
       - v**
 ```
 
-#### [jobs.<job_id>.strategy](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategy)
+#### [jobs.\<job_id>.strategy](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategy)
 
 **strategy** 可以让你通过一个作业定义，自动创建多个作业运行实例，每个实例使用不同的变量组合。
 
@@ -61,7 +61,7 @@ on:
 - 矩阵构建：为不同的架构（如 amd64、arm64）构建 Docker 镜像。
 - 参数化测试：使用不同的输入参数运行测试。
 
-#### [jobs.<job_id>.permissions](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idpermissions)
+#### [jobs.\<job_id>.permissions](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idpermissions)
 
 用于配置job的 `GITHUB_TOKEN` 的权限
 
