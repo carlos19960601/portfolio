@@ -26,7 +26,7 @@ export const projects: Array<ProjectItemType> = [
     category: ['App'],
     techStack: ['React', "Flutter"],
     tags: ['App', 'iOS', "Android"],
-    logo: '/images/icon/mempal-app-logo.png',
+    logo: '/icons/mempal-app-logo.png',
   },
   {
     name: 'ChronoWave',
@@ -36,8 +36,18 @@ export const projects: Array<ProjectItemType> = [
     category: ['Website'],
     techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
     tags: [],
-    logo: '/images/icon/mempal-app-logo.png',
+    logo: '/icons/mempal-app-logo.png',
   },
+  {
+    name: 'DevBox',
+    description:
+      '⚡ 面向软件、硬件和安全专业人员的通用开发工具包。',
+    link: { href: 'github.com/carlos19960601/DevBox', label: 'DevBox' },
+    category: ['App'],
+    techStack: ['Tauri', 'TailwindCSS', 'Shadcn/UI', "Rust"],
+    tags: ["Desktop", "Tools"],
+    logo: '/icons/devbox-logo.png',
+  }
   // {
   //   name: '菜谱',
   //   description:
