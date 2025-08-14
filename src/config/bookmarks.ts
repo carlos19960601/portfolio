@@ -88,4 +88,10 @@ export const blogs: Array<BookmarkItemType> = [
     url: "https://baoyu.io/",
     description: "宝玉的分享，主要在大语言模型、Prompt Engineering、软件工程、工程管理、前端等领域。"
   },
+  {
+    name: "CSS-Tricks",
+    url: "https://css-tricks.com/",
+    description: "CSS-Tricks - A Website About Making Websites"
+  }
 ]
+
