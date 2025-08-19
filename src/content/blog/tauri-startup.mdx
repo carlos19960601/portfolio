@@ -1,0 +1,64 @@
+---
+title: 'Tauri starter模版'
+description: ''
+date: '2025-08-19'
+---
+
+1. 初始化项目
+
+```shell
+cargo create-tauri-app
+```
+
+2. 安装shadcn
+
+```shell
+bun add tailwindcss @tailwindcss/vite
+```
+
+App.css 文件中添加
+
+```css
+@import 'tailwindcss';
+```
+
+tsconfig.json 文件中添加
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+```shell
+bun add -D @types/node
+```
+
+vite.config.ts 文件中添加
+
+```ts
+import path from 'path'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+})
+```
+
+```shell
+bunx --bun shadcn@latest init
+```
+
+```shell
+bunx --bun shadcn@latest add button
+```
