@@ -78,6 +78,11 @@ export const developerTools: Array<BookmarkItemType> = [
     name: "npm compare",
     url: "https://npm-compare.com",
     description: "Search for similar packages and compare them in terms of popularity, features, and discover popular alternatives.",
+  },
+  {
+    name: "DeepWiki",
+    url: "https://deepwiki.org",
+    description: "DeepWiki | AI documentation you can talk to, for every repo"
   }
 ]
 

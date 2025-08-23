@@ -1,0 +1,12 @@
+---
+title: '.gitignore 语法'
+description: ''
+date: '2025-08-22'
+---
+
+参考链接: [https://git-scm.com/docs/gitignore](https://git-scm.com/docs/gitignore)
+
+- 斜线 "/" 用作目录分隔符。分隔符可以出现在 `.gitignore` 搜索模式的开头、中间或结尾。
+- 如果在模式的开头或中间（或两者都有）有分隔符，则该模式是相对于特定 .gitignore 文件本身的目录层级而言的。否则，该模式也可能匹配 .gitignore 层级以下的任何层级。
+- 如果模式末尾有分隔符，则模式只能匹配目录，否则模式既可以匹配文件，也可以匹配目录。
+- 例如，模式 `doc/frotz/` 匹配 `doc/frotz` 目录，但不匹配 `a/doc/frotz` 目录；而 `frotz/` 则匹配 `frotz` 和 `a/frotz` 这两个目录（所有路径都是从 .gitignore 文件开始的相对路径）。
