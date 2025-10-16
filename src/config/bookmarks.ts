@@ -83,6 +83,11 @@ export const developerTools: Array<BookmarkItemType> = [
     name: "DeepWiki",
     url: "https://deepwiki.org",
     description: "DeepWiki | AI documentation you can talk to, for every repo"
+  },
+  {
+    name: "Zread",
+    url: "https://zread.ai/",
+    description: "Explore Deep Research in Zread, the AI code wiki with multilingual guides, architecture insights, and community buzz, helping you dive into any GitHub repo in depth."
   }
 ]
 
