@@ -88,6 +88,11 @@ export const developerTools: Array<BookmarkItemType> = [
     name: "Zread",
     url: "https://zread.ai/",
     description: "Explore Deep Research in Zread, the AI code wiki with multilingual guides, architecture insights, and community buzz, helping you dive into any GitHub repo in depth."
+  },
+  {
+    name: "Code Wiki",
+    url: "https://codewiki.google",
+    description: "A new perspective on development for the agentic era. Gemini-generated documentation, always up-to-date."
   }
 ]
 
