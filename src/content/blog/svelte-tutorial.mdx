@@ -4,89 +4,57 @@ description: ''
 date: '2025-11-04'
 ---
 
-use-intersection-observer.svelte.ts
+## 元素InView的时候才进行动画效果
 
-```ts
-export function useIntersectionObserver(options: IntersectionObserverInit) {
-  let element = $state<Element | null>(null)
-  let isIntersecting = $state(false)
-  let hasIntersected = $state(false) // 记录是否已经交叉过
+Svelte内置的 `transition:fly` 必须配置 `{#if}` 来实现动画效果。也就是当元素满足某种条件的时候，才进行动画效果。
 
-  $effect(() => {
-    if (!element) return
+最开始通过 `IntersectionObserver` 来实现 InView 的状态。这样元素出现在视图中的时候，就能有动画效果了。
 
+但是当多个InView动画元素堆叠在一起的时候，比如
+
+```
+{#if}
+	<div>InView 元素1</div>
+{/if}
+{#if}
+	<div></div>
+{/if}
+
+```
+
+```Svelte
+export const inViewFly = (options?: InViewFlyOptions): Attachment<HTMLDivElement> => {
+  const {
+    y = 20,
+    x = 0,
+    scale = 1,
+    rotate = 0,
+    duration = 500,
+    easing = "ease-out",
+    delay = 0,
+  } = options || {};
+
+  let hasIntersected = $state(false); // 记录是否已经交叉过
+
+  return (element) => {
     const observer = new IntersectionObserver(([entry]) => {
-      isIntersecting = entry.isIntersecting
       // 一旦进入视口，就标记为已交叉
       if (entry.isIntersecting) {
-        hasIntersected = true
+        hasIntersected = true;
       }
-    }, options)
+    }, options);
 
-    observer.observe(element)
+    observer.observe(element);
 
-    return () => observer.disconnect()
-  })
+    element.style.opacity = hasIntersected ? "1" : "0"
+    element.style.transform = hasIntersected ? "translate(0, 0) scale(1) rotate(0deg)" : `translate(${x}px, ${y}px) scale(${scale}) rotate(${rotate}deg)`
+    element.style.transition = `all ${duration}ms ${easing} ${delay}ms`;
 
-  return {
-    get isIntersecting() {
-      return isIntersecting
-    },
-    get hasIntersected() {
-      return hasIntersected
-    },
-    ref: (node: Element) => {
-      element = node
-    },
+    return () => {
+      observer.disconnect();
+    }
   }
 }
-```
-
-## In viewport transition
-
-```svelte
- <div
-	use:observer.ref
-	class={cn(
-		'flex flex-col py-2 transition-transform duration-500 ease-out',
-		observer.hasIntersected ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-	)}
-	style="gap: {rowGapPx}px;"
->
-	{#each rowsData as rowData (rowData?.key)}
-		<AnimatedRow>
-			<div class="flex" style="gap: {gapPx}px;">
-				{#each rowData!.presets as preset, index}
-					<PresetButton {preset} />
-				{/each}
-			</div>
-		</AnimatedRow>
-	{/each}
-</div>
-```
-
-或
-
-```svelte
-<!-- 在配合 {#key} 块使用时，如果你只需要"出现"的动画效果，应该使用 in:fly 而不是 transition:fly，这样可以避免不必要的退出动画干扰，让动画表现更加可预测和流畅。 -->
-{#key observer.hasIntersected}
-	<div
-		use:observer.ref
-		in:fly={{ y: 20, duration: 500, easing: cubicOut }}
-		class={cn('flex flex-col py-2')}
-		style="gap: {rowGapPx}px; visibility: {observer.hasIntersected ? 'visible' : 'hidden'};"
-	>
-		{#each rowsData as rowData (rowData?.key)}
-			<AnimatedRow>
-				<div class="flex" style="gap: {gapPx}px;">
-					{#each rowData!.presets as preset, index}
-						<PresetButton {preset} />
-					{/each}
-				</div>
-			</AnimatedRow>
-		{/each}
-	</div>
-{/key}
 ```
 
 动态实现delay: Tailwind 处理静态和可预测的样式，让 style: 指令处理真正动态的值。两者配合使用才能发挥最大效能！🚀
