@@ -1,0 +1,93 @@
+---
+title: 'Rust 教程'
+description: ''
+date: '2025-11-28'
+---
+
+## 为什么需要`Box`
+
+`Box` 的核心作用就是：在堆上分配内存，并返回一个指向这块内存的指针。
+
+三大核心场景
+
+Rust 的编译器在编译时必须知道所有类型的大小，这样才能在栈上为它们分配空间。
+
+1. 当类型在编译时大小未知（最经典的用途）
+
+这是 `Box` 最重要、最常见的用途。最典型的例子就是递归类型。
+
+```Rust
+// 这段代码会编译失败！
+enum List {
+    Cons(i32, List), // Cons 节点包含一个 i32 和下一个 List 节点
+    Nil,
+}
+```
+
+为什么？ 编译器试图计算 List 的大小：
+
+List 的大小 = max(Cons的大小, Nil的大小)
+Cons的大小 = i32的大小 + List的大小
+
+...编译器陷入了死循环！它发现 List 的大小依赖于 List 自身，无法得出一个有限的值。
+
+```Rust
+enum List {
+    Cons(i32, Box<List>), // 把 List 放进 Box 里！
+    Nil,
+}
+
+fn main() {
+    let list = List::Cons(1, Box::new(List::Cons(2, Box::new(List::Nil))));
+}
+```
+
+2. 转移大型数据的所有权，避免不必要的拷贝
+
+3. 实现 Trait 对象（多态）
+
+```Rust
+trait Draw {
+    fn draw(&self);
+}
+
+struct Circle {
+    radius: f64,
+}
+impl Draw for Circle {
+    fn draw(&self) { println!("Drawing a circle"); }
+}
+
+struct Square {
+    side: f64,
+}
+impl Draw for Square {
+    fn draw(&self) { println!("Drawing a square"); }
+}
+
+// 我们想创建一个存放“任何可以 Draw 的东西”的 Vec
+// 下面这行会编译失败！
+// let shapes: Vec<dyn Draw> = vec![];
+```
+
+直接使用 Vec<dyn Draw> 是不行的，因为 dyn Draw 是一个动态大小类型（DST），编译器不知道它的大小。
+
+```Rust
+trait Draw {
+    fn draw(&self);
+}
+
+// ... Circle 和 Square 的实现同上 ...
+
+fn main() {
+    // Box<dyn Draw> 表示一个拥有 Draw trait 的、被装箱的对象
+    let shapes: Vec<Box<dyn Draw>> = vec![
+        Box::new(Circle { radius: 5.0 }),
+        Box::new(Square { side: 3.0 }),
+    ];
+
+    for shape in &shapes {
+        shape.draw();
+    }
+}
+```

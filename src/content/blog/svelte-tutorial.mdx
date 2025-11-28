@@ -4,6 +4,11 @@ description: ''
 date: '2025-11-04'
 ---
 
+## SSG vs SSR
+
+- SSG: 当你运行 `npm run build` 这样的构建命令时，框架会预先为你的每一个页面生成一个独立的、完整的 HTML 文件。这些文件是静态的，不包含任何动态逻辑
+- SSR: 服务器在接收到用户的页面请求后，会实时地获取最新的数据，渲染出完整的 HTML 页面，然后返回给浏览器。
+
 ## 元素InView的时候才进行动画效果
 
 Svelte内置的 `transition:fly` 必须配置 `{#if}` 来实现动画效果。也就是当元素满足某种条件的时候，才进行动画效果。
@@ -26,6 +31,8 @@ Svelte内置的 `transition:fly` 必须配置 `{#if}` 来实现动画效果。�
 ```
 
 虽然说这样有了动画效果，但是由于isInView为false的时候，元素没有被渲染, 外层元素的高度为0，导致后面不该出现在视图中的元素出现在视图中了，提前进行了动画效果。这个是我不想要的。
+
+我看到 Action 和 Attachment, 可以实现 InView 的效:
 
 ```Svelte
 export const inViewFly = (options?: InViewFlyOptions): Attachment<HTMLDivElement> => {
@@ -61,6 +68,10 @@ export const inViewFly = (options?: InViewFlyOptions): Attachment<HTMLDivElement
   }
 }
 ```
+
+## 全局State
+
+## 动态css
 
 动态实现delay: Tailwind 处理静态和可预测的样式，让 style: 指令处理真正动态的值。两者配合使用才能发挥最大效能！🚀
 
