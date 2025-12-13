@@ -4,7 +4,7 @@ description: ''
 date: '2025-08-19'
 ---
 
-## 初始化项目
+## React版本
 
 1. 初始化项目
 
@@ -63,6 +63,49 @@ bunx --bun shadcn@latest init
 
 ```shell
 bunx --bun shadcn@latest add button
+```
+
+## Svelte 版本
+
+1. 初始化项目
+
+```shell
+cargo create-tauri-app
+```
+
+2. 添加tailwindcss
+
+```shell
+bun x sv add tailwindcss
+```
+
+3. 添加路径别名
+
+tsconfig.json
+```json
+"compilerOptions": {
+  "paths": {
+     "$lib": ["./src/lib"],
+     "$lib/*": ["./src/lib/*"]
+   }
+}
+```
+
+vite.config.js
+```ts
+export default defineConfig(async () => ({
+  resolve: {
+    alias: {
+      $lib: path.resolve("./src/lib"),
+    },
+  },
+})
+```
+
+4. 添加shadcn
+
+```shell
+bun x shadcn-svelte@latest init
 ```
 
 ## 常见操作
