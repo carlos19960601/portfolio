@@ -13,3 +13,24 @@ date: '2025-11-05'
 如果没理解这些概念也没关系，对于普通人来说，能写提示词就够了，要开发 AI 应用才需要考虑提示词工程去不断优化提示词，要开发动态的 AI 智能体才需要去搞上下文工程为 AI 的上下文窗口填充恰好的信息。
 
 **上下文工程**主张，模型输出的质量与其说取决于模型自身的架构，不如说更依赖于所提供上下文的丰富程度。
+
+## Agent的执行循环
+
+Agent结构
+
+![](/images/blog/anatomy-agent.png)
+
+Agent的执行循环
+
+![](/images/blog/agent-perception-loop.png)
+
+能够产品化上线的Agent还缺少
+
+- Streaming: Long tasks need progress updates, not just a final response
+- Memory: Persisting context across sessions
+- Middleware: Logging, rate limiting, safety checks
+- Error handling: Retries, graceful degradation
+- Context management: Summarizing/compacting as context grows
+- Orchestrating multiple agents: Deterministic workflows and autonomous orchestration patterns (handoff, magentic one etc)
+- End-user interfaces: Integrating agents into web applications
+- Complete Use Cases: Building a full coding agent with file system access, code execution, and iterative debugging

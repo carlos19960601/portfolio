@@ -4,7 +4,7 @@ description: ''
 date: '2025-11-28'
 ---
 
-## 为什么需要`Box`
+## 为什么需要 Box
 
 `Box` 的核心作用就是：在堆上分配内存，并返回一个指向这块内存的指针。
 
@@ -31,7 +31,7 @@ Cons的大小 = i32的大小 + List的大小
 
 ...编译器陷入了死循环！它发现 List 的大小依赖于 List 自身，无法得出一个有限的值。
 
-```Rust
+```rust
 enum List {
     Cons(i32, Box<List>), // 把 List 放进 Box 里！
     Nil,
@@ -46,7 +46,7 @@ fn main() {
 
 3. 实现 Trait 对象（多态）
 
-```Rust
+```rust
 trait Draw {
     fn draw(&self);
 }
@@ -70,9 +70,9 @@ impl Draw for Square {
 // let shapes: Vec<dyn Draw> = vec![];
 ```
 
-直接使用 Vec<dyn Draw> 是不行的，因为 dyn Draw 是一个动态大小类型（DST），编译器不知道它的大小。
+直接使用 `Vec<dyn Draw>` 是不行的，因为 dyn Draw 是一个动态大小类型（DST），编译器不知道它的大小。
 
-```Rust
+```rust
 trait Draw {
     fn draw(&self);
 }
@@ -90,4 +90,16 @@ fn main() {
         shape.draw();
     }
 }
+```
+
+## println!
+
+```rust
+let p = Point { x: 10, y: 20 };
+
+// 普通 Debug 格式
+println!("{:?}", p);        // Point { x: 10, y: 20 }
+
+// 美化 Debug 格式
+println!("{:#?}", p);       // 更易读的多行格式
 ```
