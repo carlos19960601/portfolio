@@ -46,6 +46,13 @@ export const uiComponents: Array<BookmarkItemType> = [
     description:
       'Discover and share video components. Ready-to-use React Tailwind components inspired by shadcn/ui.',
   },
+  {
+    name: 'ScrollX UI',
+    logo: 'https://www.scrollxui.dev/favicon.ico',
+    url: 'https://www.scrollxui.dev/',
+    description:
+      'ScrollX UI is an open-source library with customizable, animated, interactive React components to help developers build fast, visually appealing UIs.',
+  },
 ]
 
 // Navigation Station
@@ -103,6 +110,12 @@ export const developerTools: Array<BookmarkItemType> = [
     description:
       'A new perspective on development for the agentic era. Gemini-generated documentation, always up-to-date.',
   },
+  {
+    name: 'EaseMaster',
+    url: 'https://easemaster.satisui.xyz/',
+    description:
+      '设计出感觉真实的运动。这是用于生成CSS、Tailwind、Framer Motion和GSAP的三次贝塞尔曲线和弹簧物理的终极简化可视化工具。',
+  },
 ]
 
 // Articles
@@ -123,5 +136,54 @@ export const articles: Array<BookmarkItemType> = [
     url: 'https://www.bestblogs.dev/',
     logo: 'https://www.bestblogs.dev/favicon.ico',
     description: '遇见更好的技术阅读',
+  },
+]
+
+// AI
+export const ais: Array<BookmarkItemType> = [
+  {
+    name: 'Z-Image Turbo AI 在线免费使用',
+    logo: 'https://z-image.62tool.com/favicon.ico',
+    url: 'https://z-image.62tool.com/',
+    description:
+      '阿里通义最新开源 AI 绘画模型，性能和效果碾压 Flux。8 秒实时出图，免费在线体验，支持提示词示例与任务追踪。',
+  },
+  {
+    name: 'Ketchup AI',
+    url: 'https://ketchup-ai.com/zh',
+    description: '让 AI 成为你的创作助手，从文字到图像，激发无限创意可能。',
+  },
+]
+
+// Information
+export const informations: Array<BookmarkItemType> = [
+  {
+    name: 'Upstract',
+    logo: 'https://upstract.com/cdn/83/favicon.png',
+    url: 'https://upstract.com',
+    description:
+      'The Mother of News Aggregators, since 2002. Read the Entire Internet on a Single Page.',
+  },
+  {
+    name: 'buzzing',
+    url: 'https://www.buzzing.cc/',
+    description: '一个聚合了国外各大社交媒体热榜的网站',
+  },
+]
+
+// paywalls
+export const paywalls: Array<BookmarkItemType> = [
+  {
+    name: 'removepaywall',
+    logo: 'https://www.removepaywall.com/faviFold/apple-touch-icon.png',
+    url: 'https://www.removepaywall.com/',
+    description: 'Read articles without annoying paywalls',
+  },
+  {
+    name: 'Smry',
+    logo: 'https://www.smry.ai/favicon.ico?favicon.f55f3c58.ico',
+    url: 'https://www.smry.ai/',
+    description:
+      'Paste any paywalled article link and get the full text plus an AI summary. Free to use, no account, no browser extension. Works on most major news sites.',
   },
 ]
