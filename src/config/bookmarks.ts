@@ -116,6 +116,11 @@ export const developerTools: Array<BookmarkItemType> = [
     description:
       '设计出感觉真实的运动。这是用于生成CSS、Tailwind、Framer Motion和GSAP的三次贝塞尔曲线和弹簧物理的终极简化可视化工具。',
   },
+  {
+    name: 'rising-repo',
+    url: 'https://yanggggjie.github.io/rising-repo/',
+    description: '',
+  },
 ]
 
 // Articles
@@ -185,5 +190,15 @@ export const paywalls: Array<BookmarkItemType> = [
     url: 'https://www.smry.ai/',
     description:
       'Paste any paywalled article link and get the full text plus an AI summary. Free to use, no account, no browser extension. Works on most major news sites.',
+  },
+]
+
+// cracks
+export const cracks: Array<BookmarkItemType> = [
+  {
+    name: 'Xmac',
+    logo: 'https://xmac.app/assets/icons/logo.png',
+    url: 'https://xmac.app/',
+    description: 'Download crack app for mac with full speed just one step...',
   },
 ]
