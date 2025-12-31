@@ -13,13 +13,6 @@ export type BookmarkItemType = {
 // UI Components
 export const uiComponents: Array<BookmarkItemType> = [
   {
-    name: 'Origin UI',
-    logo: 'https://originui.com/icon.svg',
-    url: 'https://originui.com',
-    description:
-      'An open-source collection of copy-and-paste components for quickly build application UIs.',
-  },
-  {
     name: 'Aceternity UI',
     logo: 'https://ui.aceternity.com/logo.png',
     url: 'https://ui.aceternity.com',
@@ -52,6 +45,13 @@ export const uiComponents: Array<BookmarkItemType> = [
     url: 'https://www.scrollxui.dev/',
     description:
       'ScrollX UI is an open-source library with customizable, animated, interactive React components to help developers build fast, visually appealing UIs.',
+  },
+  {
+    name: 'coss.com UI',
+    logo: 'https://coss.com/ui/favicon.ico?favicon.a1715d3a.ico',
+    url: 'https://coss.com/ui/docs',
+    description:
+      'A new, modern UI component library built on top of Base UI. Built for developers and AI.',
   },
 ]
 
@@ -200,5 +200,20 @@ export const cracks: Array<BookmarkItemType> = [
     logo: 'https://xmac.app/assets/icons/logo.png',
     url: 'https://xmac.app/',
     description: 'Download crack app for mac with full speed just one step...',
+  },
+]
+
+// softwares
+export const softwares: Array<BookmarkItemType> = [
+  {
+    name: 'Mole',
+    url: 'https://github.com/tw93/Mole',
+    description: '🐹 Deep clean and optimize your Mac.',
+  },
+  {
+    name: "Monodraw",
+    url: "https://monodraw.helftone.com/",
+    logo: "https://monodraw.helftone.com//static/images/favicons/apple-touch-icon-180x180.png",
+    description: "Powerful ASCII art editor designed for the Mac.",
   },
 ]
