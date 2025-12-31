@@ -1,0 +1,66 @@
+---
+title: 'PostgreSQL 随笔'
+description: 'PostgreSQL 数据库常用操作与命令笔记'
+date: '2025-12-30'
+---
+
+## 运维操作
+
+创建用户
+
+```sql
+CREATE USER <user_name> WITH PASSWORD '<password>';
+
+CREATE USER kong WITH PASSWORD 'HomTwi4vWlYj7Bp';
+CREATE USER kong_ro WITH PASSWORD 'hoRj7Q0dJElVnns';
+```
+
+删除用户
+
+```sql
+DROP USER IF EXISTS <user_name>;
+```
+
+创建数据库
+
+```sql
+CREATE DATABASE <database_name> WITH OWNER <username>;
+
+
+CREATE DATABASE kong WITH OWNER kong;
+```
+
+修改数据库所有者
+
+```sql
+ALTER DATABASE kong OWNER TO kong;
+```
+
+只读权限
+
+```sql
+grant SELECT ON ALL TABLES IN SCHEMA public TO kong_ro;
+```
+
+## 常用命令
+
+```
+| 命令               | 描述                     |
+| ------------------ | ------------------------ |
+| \l                 | 列出所有数据库           |
+| \c <database>      | 连接到数据库             |
+| \dt                | 列出当前数据库的所有表   |
+| \dt+               | 列出表及其大小           |
+| \di                | 列出所有索引             |
+| \dv                | 列出所有视图             |
+| \ds                | 列出所有序列             |
+| \du                | 列出所有用户             |
+| \dp <table>        | 查看表的权限             |
+| \d <table>         | 查看表结构               |
+| \d+ <table>        | 查看表详细结构           |
+| \df                | 列出所有函数             |
+| \x                 | 切换扩展显示模式         |
+| \timing            | 切换执行时间显示         |
+| \conninfo          | 显示当前连接信息         |
+| \q                 | 退出                     |
+```
