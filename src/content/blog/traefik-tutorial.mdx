@@ -1,0 +1,563 @@
+---
+title: 'Traefik Proxy v3.0 教程'
+description: ''
+date: '2025-01-05'
+---
+
+## 什么是 Traefik?
+
+Traefik 是一个开源的现代 HTTP 反向代理和负载均衡器，专为云原生应用设计。与传统的反向代理(如 Nginx)不同,Traefik 能够自动发现服务并动态更新配置,无需重启。
+
+## 核心概念
+
+### EntryPoint
+
+入口点是 Traefik 监听的网络入口端口,例如:
+- `web`: 端口 80,接收 HTTP 流量
+- `websecure`: 端口 443,接收 HTTPS 流量
+
+### Router
+
+路由器负责将传入的请求连接到能够处理它们的服务。路由器通过规则(Rule)来匹配请求。
+
+### Service
+
+服务定义了如何到达实际处理请求的后端服务。可以配置负载均衡、健康检查等。
+
+### Middleware
+
+中间件用于在请求发送到服务之前或响应返回客户端之前修改请求或响应。
+
+## 路由规则
+
+Traefik v3.0 使用新的规则语法(v3),支持多种匹配器:
+
+### 常用匹配器
+
+| 匹配器 | 描述 |
+| --- | --- |
+| `Host(\`domain\`)` | 匹配特定域名 |
+| `HostRegexp(\`regexp\`)` | 使用正则表达式匹配域名 |
+| `Path(\`/path\`)` | 精确匹配路径 |
+| `PathPrefix(\`/api\`)` | 匹配路径前缀 |
+| `Method(\`GET\`)` | 匹配 HTTP 方法 |
+| `Header(\`key\`, \`value\`)` | 匹配请求头 |
+| `Query(\`key\`, \`value\`)` | 匹配查询参数 |
+
+### 复杂规则示例
+
+```yaml
+# 组合多个条件
+rule: "Host(\`example.com\`) && PathPrefix(\`/api\`)"
+
+# 使用 OR 和 AND
+rule: "Host(\`example.com\`) || (Host(\`api.example.com\`) && Path(\`/v1\`))"
+
+# 使用 NOT 取反
+rule: "Host(\`example.com\`) && !Path(\`/health\`)"
+```
+
+## 基础配置示例
+
+### Docker Compose 配置
+
+```yaml
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Dashboard
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  whoami:
+    image: traefik/whoami
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(\`whoami.example.com\`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.services.whoami.loadbalancer.server.port=80"
+```
+
+## 中间件实战
+
+### 1. StripPrefix - 移除路径前缀
+
+当后端服务监听根路径但需要暴露在特定前缀下时使用:
+
+```yaml
+http:
+  middlewares:
+    strip-api:
+      stripPrefix:
+        prefixes:
+          - "/api"
+          - "/v1"
+
+# Docker labels
+labels:
+  - "traefik.http.middlewares.strip-api.stripprefix.prefixes=/api,/v1"
+```
+
+**示例**: 请求 `/api/users` 会被转发到后端的 `/users`
+
+### 2. AddPrefix - 添加路径前缀
+
+```yaml
+http:
+  middlewares:
+    add-api:
+      addPrefix:
+        prefix: "/api"
+```
+
+**示例**: 请求 `/users` 会被转发到后端的 `/api/users`
+
+### 3. ReplacePath - 替换整个路径
+
+```yaml
+http:
+  middlewares:
+    replace-root:
+      replacePath:
+        path: "/health"
+```
+
+### 4. Headers - 自定义请求/响应头
+
+```yaml
+http:
+  middlewares:
+    custom-headers:
+      headers:
+        customRequestHeaders:
+          X-Script-Name: "test"
+          X-Custom-Header: "value"
+        customResponseHeaders:
+          X-Custom-Response: "value"
+        # 安全头
+        frameDeny: true
+        browserXssFilter: true
+        contentTypeNosniff: true
+```
+
+**删除头**: 设置为空字符串即可删除
+
+```yaml
+customRequestHeaders:
+  X-Internal-Header: ""  # 删除此头
+```
+
+### 5. CORS 跨域配置
+
+```yaml
+http:
+  middlewares:
+    cors:
+      headers:
+        accessControlAllowMethods:
+          - GET
+          - POST
+          - OPTIONS
+        accessControlAllowHeaders: "*"
+        accessControlAllowOriginList:
+          - "https://example.com"
+          - "https://app.example.com"
+        accessControlMaxAge: 100
+        addVaryHeader: true
+```
+
+### 6. BasicAuth - 基本认证
+
+```yaml
+http:
+  middlewares:
+    basicauth:
+      basicAuth:
+        users:
+          - "test:$apr1$h6wgk5hg$HfNJJRpJSX1cFHkS8w8Q0."  # user:test
+```
+
+生成密码哈希:
+```bash
+echo $(htpasswd -nB user) | sed -e 's/\$/\$\$/g'
+```
+
+### 7. IPAllowList - IP 白名单
+
+```yaml
+http:
+  middlewares:
+    ipwhitelist:
+      ipAllowList:
+        sourceRange:
+          - "192.168.1.0/24"
+          - "10.0.0.1"
+```
+
+### 8. RateLimit - 速率限制
+
+```yaml
+http:
+  middlewares:
+    rate-limit:
+      rateLimit:
+        average: 100
+        burst: 50
+        period: 1m
+```
+
+### 9. Chain - 中间件链
+
+将多个中间件组合在一起:
+
+```yaml
+http:
+  middlewares:
+    secure-api:
+      chain:
+        middlewares:
+          - cors
+          - rate-limit
+          - strip-api
+```
+
+## 完整实战示例
+
+### 配置文件方式
+
+```yaml
+## traefik/config.yml
+
+http:
+  routers:
+    # API 路由
+    api-router:
+      rule: "Host(\`api.example.com\`) && PathPrefix(\`/api\`)"
+      entryPoints:
+        - "websecure"
+      middlewares:
+        - cors
+        - rate-limit
+        - strip-api
+      service: api-service
+      tls: {}
+
+    # 前端路由
+    frontend-router:
+      rule: "Host(\`app.example.com\`)"
+      entryPoints:
+        - "websecure"
+      service: frontend-service
+      tls: {}
+
+  services:
+    # API 服务(负载均衡)
+    api-service:
+      loadBalancer:
+        servers:
+          - url: "http://api-server-1:8080"
+          - url: "http://api-server-2:8080"
+        healthCheck:
+          path: "/health"
+          interval: "10s"
+          timeout: "3s"
+        passHostHeader: true
+        sticky:
+          cookie:
+            name: "lb_cookie"
+            secure: true
+            httpOnly: true
+
+    # 前端服务
+    frontend-service:
+      loadBalancer:
+        servers:
+          - url: "http://frontend:80"
+
+  middlewares:
+    cors:
+      headers:
+        accessControlAllowMethods:
+          - GET
+          - POST
+          - OPTIONS
+        accessControlAllowHeaders: "*"
+        accessControlAllowOriginList:
+          - "https://example.com"
+        accessControlMaxAge: 100
+        addVaryHeader: true
+
+    rate-limit:
+      rateLimit:
+        average: 100
+        burst: 50
+
+    strip-api:
+      stripPrefix:
+        prefixes:
+          - "/api"
+
+tls:
+  certificates:
+    - certFile: "/certs/cert.pem"
+      keyFile: "/certs/key.pem"
+```
+
+### Docker Labels 方式
+
+```yaml
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./certs:/certs"
+
+  api:
+    image: my-api:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(\`api.example.com\`)"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls=true"
+      - "traefik.http.routers.api.middlewares=cors,rate-limit"
+      - "traefik.http.services.api.loadbalancer.server.port=8080"
+
+  frontend:
+    image: my-frontend:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(\`app.example.com\`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls=true"
+      - "traefik.http.services.frontend.loadbalancer.server.port=80"
+
+  # 中间件定义(使用 whoami 容器作为示例)
+  middlewares:
+    image: alpine:latest
+    command: ["sleep", "infinity"]
+    labels:
+      # CORS
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,OPTIONS"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://example.com"
+      - "traefik.http.middlewares.cors.headers.accesscontrolmaxage=100"
+      - "traefik.http.middlewares.cors.headers.addvaryheader=true"
+
+      # Rate Limit
+      - "traefik.http.middlewares.rate-limit.ratelimit.average=100"
+      - "traefik.http.middlewares.rate-limit.ratelimit.burst=50"
+```
+
+## 高级功能
+
+### 健康检查
+
+```yaml
+http:
+  services:
+    my-service:
+      loadBalancer:
+        servers:
+          - url: "http://server1:8080"
+          - url: "http://server2:8080"
+        healthCheck:
+          path: "/health"
+          interval: "10s"
+          timeout: "3s"
+          scheme: "http"
+          port: 8080
+```
+
+### 断路器
+
+```yaml
+http:
+  middlewares:
+    circuit-breaker:
+      circuitBreaker:
+        expression: "NetworkErrorRatio() > 0.5"
+```
+
+### 重试机制
+
+```yaml
+http:
+  middlewares:
+    retries:
+      retry:
+        attempts: 3
+        initialInterval: "100ms"
+```
+
+### 会话保持
+
+```yaml
+http:
+  services:
+    my-service:
+      loadBalancer:
+        sticky:
+          cookie:
+            name: "session"
+            secure: true
+            httpOnly: true
+            sameSite: "lax"
+```
+
+### 权重路由
+
+```yaml
+http:
+  services:
+    app:
+      weighted:
+        services:
+          - name: app-v1
+            weight: 3
+          - name: app-v2
+            weight: 1
+
+    app-v1:
+      loadBalancer:
+        servers:
+          - url: "http://app-v1:8080"
+
+    app-v2:
+      loadBalancer:
+        servers:
+          - url: "http://app-v2:8080"
+```
+
+### 故障转移
+
+```yaml
+http:
+  services:
+    app:
+      failover:
+        service: main
+        fallback: backup
+
+    main:
+      loadBalancer:
+        healthCheck:
+          path: "/health"
+        servers:
+          - url: "http://main:8080"
+
+    backup:
+      loadBalancer:
+        servers:
+          - url: "http://backup:8080"
+```
+
+## HTTPS 配置
+
+### 自动 HTTPS(Let's Encrypt)
+
+```yaml
+command:
+  - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+  - "--certificatesresolvers.myresolver.acme.email=admin@example.com"
+  - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+
+# 在路由中使用
+labels:
+  - "traefik.http.routers.myapp.tls.certresolver=myresolver"
+```
+
+### 自定义证书
+
+```yaml
+tls:
+  certificates:
+    - certFile: "/certs/example.com.crt"
+      keyFile: "/certs/example.com.key"
+```
+
+## 优先级
+
+当多个路由规则可能匹配同一个请求时,使用 priority 控制:
+
+```yaml
+http:
+  routers:
+    # 更具体的规则
+    api-users:
+      rule: "Host(\`api.example.com\`) && Path(\`/users\`)"
+      priority: 100
+      service: api-service
+
+    # 通用规则
+    api:
+      rule: "Host(\`api.example.com\`)"
+      priority: 50
+      service: api-service
+```
+
+默认情况下,Traefik 根据规则的长度自动计算优先级(规则越长,优先级越高)。
+
+## 调试技巧
+
+### 查看 Traefik 日志
+
+```yaml
+command:
+  - "--log.level=DEBUG"
+  - "--accesslog=true"
+```
+
+### Dashboard
+
+访问 `http://localhost:8080` 查看 Dashboard,监控路由、服务和中间件的状态。
+
+## 常见问题
+
+### 1. 中间件顺序很重要
+
+中间件按照声明的顺序执行:
+
+```yaml
+middlewares:
+  - strip-prefix  # 先移除前缀
+  - add-headers   # 再添加头
+```
+
+### 2. 规则匹配
+
+Traefik 使用第一个匹配的路由,如果有多个可能的匹配,通过 priority 控制。
+
+### 3. 健康检查
+
+确保后端服务的健康检查端点返回 2xx 或 3xx 状态码。
+
+## 相关链接
+
+- [官方文档](https://doc.traefik.io/traefik/)
+- [路由配置](https://doc.traefik.io/traefik/routing/routers/)
+- [中间件列表](https://doc.traefik.io/traefik/middlewares/overview/)
+- [Docker Provider](https://doc.traefik.io/traefik/providers/docker/)
