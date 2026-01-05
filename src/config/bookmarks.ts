@@ -121,6 +121,11 @@ export const developerTools: Array<BookmarkItemType> = [
     url: 'https://yanggggjie.github.io/rising-repo/',
     description: '',
   },
+  {
+    name: "生成订阅节点",
+    url: "https://proxyip.snu.cc/",
+    description: "生成订阅节点"
+  }
 ]
 
 // Articles
