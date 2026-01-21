@@ -122,10 +122,10 @@ export const developerTools: Array<BookmarkItemType> = [
     description: '',
   },
   {
-    name: "生成订阅节点",
-    url: "https://proxyip.snu.cc/",
-    description: "生成订阅节点"
-  }
+    name: '生成订阅节点',
+    url: 'https://proxyip.snu.cc/',
+    description: '生成订阅节点',
+  },
 ]
 
 // Articles
@@ -216,9 +216,19 @@ export const softwares: Array<BookmarkItemType> = [
     description: '🐹 Deep clean and optimize your Mac.',
   },
   {
-    name: "Monodraw",
-    url: "https://monodraw.helftone.com/",
-    logo: "https://monodraw.helftone.com//static/images/favicons/apple-touch-icon-180x180.png",
-    description: "Powerful ASCII art editor designed for the Mac.",
+    name: 'Monodraw',
+    url: 'https://monodraw.helftone.com/',
+    logo: 'https://monodraw.helftone.com//static/images/favicons/apple-touch-icon-180x180.png',
+    description: 'Powerful ASCII art editor designed for the Mac.',
+  },
+]
+
+// vibe codings
+export const vibeCodings: Array<BookmarkItemType> = [
+  {
+    name: 'design/prompts',
+    url: 'https://www.designprompts.dev/',
+    description:
+      'Drop these prompts into any AI assistant and ship beautiful, consistent interfaces in minutes.',
   },
 ]

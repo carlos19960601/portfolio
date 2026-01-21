@@ -34,14 +34,14 @@ export const projects: Array<ProjectItemType> = [
       '一款根据实时热榜生成报纸和播客的应用',
     link: { href: '#', label: 'ChronoWave' },
     category: ['Website'],
-    techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
+    techStack: ['Sveltekit', 'TailwindCSS', 'Shadcn/UI'],
     tags: [],
     logo: '/icons/mempal-app-logo.png',
   },
   {
     name: 'DevBox',
     description:
-      '⚡ 面向软件、硬件和安全专业人员的通用开发工具包。',
+      '⚡ Universal developer toolkit for software, hardware, and security professionals.',
     link: { href: 'github.com/carlos19960601/DevBox', label: 'DevBox' },
     category: ['App'],
     techStack: ['Tauri', 'TailwindCSS', 'Shadcn/UI', "Rust"],
@@ -49,18 +49,18 @@ export const projects: Array<ProjectItemType> = [
     logo: '/icons/devbox-logo.png',
   }
   // {
-  //   name: '菜谱',
+  //   name: 'Luma',
   //   description:
-  //     '从小红书上爬取菜谱做法，然后微调模型，App上传图片识别什么菜，然后让大模型返回菜谱',
+  //     '',
   //   link: { href: 'github.cards', label: 'GitHub Cards' },
   //   category: ['Website'],
   //   techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
   //   tags: ['Visual Cards', 'GitHub Contribution Cards']
   // },
   // {
-  //   name: 'AI Best Tools',
+  //   name: 'Lumen',
   //   description:
-  //     'Find the best AI tools in AIBest.tools',
+  //     '',
   //   link: { href: 'aibest.tools', label: 'AI Best Tools' },
   //   logo: 'images/icon/aibesttools.png',
   //   category: ['Website'],
@@ -68,54 +68,14 @@ export const projects: Array<ProjectItemType> = [
   //   tags: ['AI', 'Tools Directory']
   // },
   // {
-  //   name: 'Best Directories',
+  //   name: 'TypDoc',
   //   description:
-  //     'Your ultimate directory of directories.',
+  //     '',
   //   link: { href: 'bestdirectories.org', label: 'Best Directories' },
   //   logo: '/images/icon/bestdirectories.png',
   //   category: ['Website'],
   //   techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
   //   tags: ['Directory of Directories']
-  // },
-  // {
-  //   name: 'User Growth',
-  //   description:
-  //     'Boost Your business growth with UserGrowth.link',
-  //   link: { href: 'usergrowth.link', label: 'User Growth' },
-  //   logo: '/images/icon/usergrowth.ico',
-  //   category: ['Website'],
-  //   techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
-  //   tags: ['User Growth', 'Marketing', 'SEO']
-  // },
-  // {
-  //   name: 'Dev Toolset',
-  //   description:
-  //     'Open-source database-free tools directory.',
-  //   link: { href: 'devtoolset.net', label: 'Dev Toolset' },
-  //   logo: '/images/icon/devtoolset.png',
-  //   category: ['Website'],
-  //   techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
-  //   tags: ['Open Source', 'Database-Free', 'Tools Directory']
-  // },
-  // {
-  //   name: 'Domain Score',
-  //   description:
-  //     'Ultimate AI-Powered tool for domain scoring and evaluation',
-  //   link: { href: 'domainscore.ai', label: 'Domain Score' },
-  //   logo: '/images/icon/domainscore.png',
-  //   category: ['Website'],
-  //   techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
-  //   tags: ['Domain', 'AI', 'SEO']
-  // },
-  // {
-  //   name: 'MagicBox Tools',
-  //   description:
-  //     'Find the best AI tools in MagicBox.tools',
-  //   link: { href: 'magicbox.tools', label: 'MagicBox Tools' },
-  //   logo: '/images/icon/magicbox.png',
-  //   category: ['Website'],
-  //   techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
-  //   tags: ['AI', 'Tools Directory']
   // },
 ]
 
@@ -135,45 +95,6 @@ export const githubProjects: Array<ProjectItemType> = [
     gitStars: 1,
     gitForks: 1
   },
-  // {
-  //   name: 'Chrome Extension Plasmo Template',
-  //   description:
-  //     'A chrome extension template using plasmo, tailwind css, shadcn/ui',
-  //   link: { href: 'github.com/iAmCorey/chrome-extension-plasmo-template', label: 'Chrome Extension Plasmo Template' },
-  //   gitStars: 54,
-  //   gitForks: 10
-  // },
-  // {
-  //   name: 'Awesome Indie Hacker Tools',
-  //   description:
-  //     '独立开发/出海开发相关技术栈及工具收录 / Find the best tools for indie hackers here',
-  //   link: { href: 'github.com/iAmCorey/awesome-indie-hacker-tools', label: 'Awesome Indie Hacker Tools' },
-  //   gitStars: 815,
-  //   gitForks: 69
-  // },
-  // {
-  //   name: 'Awesome AI Directory',
-  //   description:
-  //     'AI资源工具导航站收录 / Find all the best AI directories',
-  //   link: { href: 'github.com/iAmCorey/awesome-ai-directory', label: 'Awesome AI Directory' },
-  //   gitStars: 40,
-  //   gitForks: 7
-  // },
-  // {
-  //   name: 'Producthunt Daily Bot',
-  //   description:
-  //     'A bot getting product hunt daily top products',
-  //   link: { href: 'github.com/iAmCorey/producthunt-daily-bot', label: 'Producthunt Daily Bot' },
-  //   gitStars: 3,
-  //   gitForks: 3
-  // },
-  // {
-  //   name: 'Cantonese Echoes',
-  //   description:
-  //     'Cantonese Echoes / 粵語殘片',
-  //   link: { href: 'github.com/iAmCorey/Cantonese-Echoes', label: 'Cantonese Echoes' },
-  //   gitStars: 1
-  // },
 ]
 
 
