@@ -223,8 +223,33 @@ export const softwares: Array<BookmarkItemType> = [
   },
 ]
 
-// vibe codings
-export const vibeCodings: Array<BookmarkItemType> = [
+// agents skills
+export const agentSkills: Array<BookmarkItemType> = [
+  {
+    name: "Agent Skills",
+    url: "https://agent-skills.cc/zh",
+    description: "精选 63,000+ AI Agent Skills"
+  },
+  {
+    name: "Skills",
+    url: "https://skills.sh",
+    description: "Skills are reusable capabilities for AI agents. Install them with a single command to enhance your agents with access to procedural knowledge."
+  },
+  {
+    name: "~/skillsmp",
+    url: "https://skillsmp.com/zh",
+    description: "浏览 500000+ agent skills，兼容 Claude Code、Codex CLI 和 ChatGPT。AI 编程助手的开放标准 SKILL.md 格式。"
+  }
+]
+
+// UI Prompt
+export const uiPrompts:  Array<BookmarkItemType> = [
+    {
+      name: 'UI Design Prompt',
+      url: 'https://www.uiprompt.site/zh/home',
+      description:
+        '探索 70+ 种现代 UI 设计风格，获取专业 AI 生成提示词。包含玻璃态、新拟物、扁平化、赛博朋克等流行设计系统，帮助您的 AI 生成独特 UI。',
+  },
   {
     name: 'design/prompts',
     url: 'https://www.designprompts.dev/',

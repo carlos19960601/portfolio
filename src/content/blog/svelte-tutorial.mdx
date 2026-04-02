@@ -71,6 +71,156 @@ export const inViewFly = (options?: InViewFlyOptions): Attachment<HTMLDivElement
 
 ## 全局State
 
+```ts
+// @ts-nocheck
+import { browser } from '$app/environment';
+
+const STORAGE_KEY = 'sidebar-collapsed';
+
+// 从 localStorage 读取初始值
+let initialState = false;
+if (browser) {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored !== null) {
+    initialState = stored === 'true';
+  }
+}
+
+// 内部状态（不直接导出）
+let collapsed = $state(initialState);
+
+// 监听状态变化，自动保存到 localStorage
+if (browser) {
+  $effect(() => {
+    localStorage.setItem(STORAGE_KEY, String(collapsed));
+  });
+}
+
+// 导出 getter 函数（响应式）
+export function getCollapsed() {
+  return collapsed;
+}
+
+// 导出 setter 函数
+export function setCollapsed(value: boolean) {
+  collapsed = value;
+}
+
+// 导出 toggle 函数
+export function toggleSidebar() {
+  collapsed = !collapsed;
+}
+```
+
+```
+模式 1：全局响应式对象（适合配置）                                             
+                                                                                
+// config.svelte.ts                                                            
+export const config = $state({                                                 
+  theme: 'dark',                                                               
+  textSize: '16px'                                                             
+})                                                                             
+                                                                                
+// 使用                                                                        
+import { config } from '$lib/config'                                           
+config.theme = 'light'  // ✅ 可以更新                                         
+                                                                                
+原理：$state 返回 Proxy 对象，可以修改属性                                     
+                                                                                
+---                                                                            
+模式 2：Getter/Setter 单例（推荐用于全局状态）                                 
+                                                                                
+// counter.svelte.ts                                                           
+let count = $state(0)                                                          
+                                                                                
+export const counter = {                                                       
+  get count() { return count },                                                
+  set count(value) { count = value },                                          
+  increment() { count++ }                                                      
+}                                                                              
+                                                                                
+// 使用                                                                        
+import { counter } from '$lib/counter'                                         
+counter.count++           // 读取/写入                                         
+counter.increment()       // 方法                                              
+                                                                                
+优点：                                                                         
+- ✅ 语法简洁，像普通对象                                                      
+- ✅ 可以封装方法                                                              
+- ✅ 全局单例，整个应用共享                                                    
+                                                                                
+---                                                                            
+模式 3：工厂函数（创建独立实例）                                               
+                                                                                
+// counter.svelte.ts                                                           
+export function createCounter() {                                              
+  let count = $state(0)                                                        
+  let double = $derived(count * 2)  // 派生状态                                
+                                                                                
+  return {                                                                     
+    get count() { return count },                                              
+    set count(value) { count = value },                                        
+    get double() { return double },                                            
+    increment() { count++ }                                                    
+  }                                                                            
+}                                                                              
+                                                                                
+// 使用（每次调用创建新实例）                                                  
+import { createCounter } from '$lib/counter'                                   
+const counter1 = createCounter()  // 独立实例                                  
+const counter2 = createCounter()  // 独立实例                                  
+                                                                                
+优点：                                                                         
+- ✅ 每个调用有独立状态                                                        
+- ✅ 支持多个实例                                                              
+- ✅ 可以使用 $derived                                                         
+                                                                                
+---                                                                            
+模式 4：类模式（面向对象）                                                     
+                                                                                
+// counter.svelte.ts                                                           
+export class Counter {                                                         
+  count = $state(0)                                                            
+  double = $derived(this.count * 2)                                            
+                                                                                
+  increment = () => this.count++                                               
+}                                                                              
+                                                                                
+// 使用                                                                        
+import { Counter } from '$lib/counter'                                         
+const counter = new Counter()                                                  
+                                                                                
+优点：                                                                         
+- ✅ 支持私有字段 #count                                                       
+- ✅ 支持继承                                                                  
+- ✅ 适合复杂业务逻辑                                                          
+                                                                                
+---                                                                            
+模式 5：TanStack Query 集成（服务端状态）                                      
+                                                                                
+// queries/materials.ts                                                        
+export function useRecentMaterials(limit = 20) {                               
+  return createQuery({                                                         
+    queryKey: ['materials', 'recent', limit],                                  
+    queryFn: () => api.commands.getRecentMaterials(limit)                      
+  })                                                                           
+}                                                                              
+                                                                                
+// 使用                                                                        
+const materials = useRecentMaterials()                                         
+                                                                                
+特点：                                                                         
+- 处理服务端状态                                                               
+- 自动缓存、刷新、去重                                                         
+- 返回 query 对象（data, isLoading, error 等）                                 
+```
+
+总结：Svelte 5 的 composable 模式非常灵活，关键是根据场景选择： 
+
+- 全局配置 → $state 对象                                                       
+- 独立实例 → 工厂函数 + getter/setter                                          
+- 服务端数据 → TanStack Query（你的情况）       
+
 ## 动态css
 
 动态实现delay: Tailwind 处理静态和可预测的样式，让 style: 指令处理真正动态的值。两者配合使用才能发挥最大效能！🚀
@@ -78,3 +228,236 @@ export const inViewFly = (options?: InViewFlyOptions): Attachment<HTMLDivElement
 ```css
 style="--delay: {i * 50}ms; transition-delay: var(--delay);"
 ```
+
+
+## Svelte 5 响应式追踪断掉问题
+
+问题背景                                                                       
+                                                                                 
+  在 createUserSettings 中，通过 getter 返回 userSettingsQuery.data              
+  导致响应式追踪失效。                                                           
+                                                                                 
+  // ❌ 问题代码                                                                 
+  return {                                                                       
+    get settings() {                                                             
+      return userSettingsQuery.data;  // 返回内部普通对象                        
+    }                                                                            
+  }                                                                              
+                                                                                 
+  // 组件中使用                                                                  
+  const { settings } = createUserSettings();                                     
+  const isConfigured = $derived(                                                 
+    !!(settings?.ai?.current_stt_provider && settings?.ai?.current_stt_model)    
+  );                                                                             
+  // settings 值不会响应式更新                                                   
+                                                                                 
+  核心原理                                                                       
+                                                                                 
+  Svelte 5 响应式追踪机制                                                        
+                                                                                 
+  - 基于 Proxy 拦截：追踪属性访问路径                                            
+  - 需要完整的代理链：每个属性访问都要能被拦截                                   
+  - 关键：不能断掉响应式链路                                                     
+                                                                                 
+  // ✅ 正常追踪                                                                 
+  $state(obj) ──▶ Proxy(level1) ──▶ Proxy(level2) ──▶ 属性访问                   
+                                                                                 
+  // ❌ 追踪断掉                                                                 
+  $state(obj) ──▶ getter() ──▶ 普通对象 ──▶ 无法追踪                             
+                                                                                 
+  响应式追踪断掉的常见场景                                                       
+                                                                                 
+  1. 通过 getter 返回内部对象 ❌                                                 
+                                                                                 
+  let user = $state({                                                            
+    address: { city: 'Tokyo' }                                                   
+  });                                                                            
+                                                                                 
+  // ❌ 断掉                                                                     
+  function getAddress() {                                                        
+    return user.address;  // 返回普通对象                                        
+  }                                                                              
+  let city = $derived(getAddress().city);                                        
+                                                                                 
+  // ✅ 正确                                                                     
+  let city = $derived(user.address.city);                                        
+                                                                                 
+  2. 解构赋值 ❌                                                                 
+                                                                                 
+  let user = $state({ name: 'John', age: 30 });                                  
+                                                                                 
+  // ❌ 断掉                                                                     
+  let { name } = user;                                                           
+                                                                                 
+  // ✅ 正确                                                                     
+  let name = $derived(user.name);                                                
+                                                                                 
+  3. 保存外部引用 ❌                                                             
+                                                                                 
+  let user = $state({ hobbies: ['reading'] });                                   
+                                                                                 
+  // ❌ 断掉                                                                     
+  let myHobbies = user.hobbies;                                                  
+                                                                                 
+  // ✅ 正确                                                                     
+  let myHobbies = $derived(user.hobbies);                                        
+                                                                                 
+  4. 返回 query.data（内部值）❌                                                 
+                                                                                 
+  // ❌ 断掉：返回内部普通对象                                                   
+  get settings() {                                                               
+    return userSettingsQuery.data;                                               
+  }                                                                              
+  // 使用：settings?.ai?.current_stt_provider                                    
+                                                                                 
+  5. 返回整个 query 对象 ✅                                                      
+                                                                                 
+  // ✅ 正常：返回响应式对象                                                     
+  get query() {                                                                  
+    return userSettingsQuery;                                                    
+  }                                                                              
+  // 使用：query.data?.ai?.current_stt_provider                                  
+                                                                                 
+  原理图解                                                                       
+                                                                                 
+  正常追踪链路                                                                   
+                                                                                 
+  ┌─────────┐     ┌─────────┐     ┌─────────┐                                    
+  │ $state  │ ──▶ │ Proxy   │ ──▶ │ Proxy   │                                    
+  │ source  │     │ level 1 │     │ level 2 │                                    
+  └─────────┘     └─────────┘     └─────────┘                                    
+       ▲              ▲              ▲                                           
+       └──────────────┴──────────────┘                                           
+        Svelte 可以追踪整个路径                                                  
+                                                                                 
+  断掉追踪链路                                                                   
+                                                                                 
+  ┌─────────┐     ┌─────────┐     ┌─────────┐                                    
+  │ $state  │ ──▶ │ getter   │ ──▶ │ 普通对象 │                                  
+  │ source  │     │ 函数     │     │ (无代理) │                                  
+  └─────────┘     └─────────┘     └─────────┘                                    
+       ▲                              ▲                                          
+       └──────────────────────────────┘                                          
+        ❌ 链条在这里断了！                                                      
+                                                                                 
+  你的代码问题可视化                                                             
+                                                                                 
+  // 当前代码（断掉）                                                            
+  createQuery() ──▶ query.data ──▶ get settings() ──▶ 普通对象 ❌                
+                                                ▲                                
+                                      追踪在这里断掉                             
+                                                                                 
+  // 应该改成（正常）                                                            
+  createQuery() ──▶ query.data ✅                                                
+                          ▲                                                      
+                   直接访问，保持追踪                                            
+                                                                                 
+  解决方案对比                                                                   
+  ┌────────────┬──────────────────────────────────────┬──────────┬────────────┐  
+  │    方案    │                 代码                 │ 是否断掉 │   推荐度   │  
+  ├────────────┼──────────────────────────────────────┼──────────┼────────────┤  
+  │ 返回 data  │ get settings() { return query.data } │ ❌ 是    │ ⭐         │  
+  ├────────────┼──────────────────────────────────────┼──────────┼────────────┤  
+  │ 返回 query │ get query() { return query }         │ ✅ 否    │ ⭐⭐⭐     │  
+  ├────────────┼──────────────────────────────────────┼──────────┼────────────┤  
+  │ 直接暴露   │ query: userSettingsQuery             │ ✅ 否    │ ⭐⭐⭐⭐⭐ │  
+  └────────────┴──────────────────────────────────────┴──────────┴────────────┘  
+  最佳实践代码                                                                   
+                                                                                 
+  推荐方案：直接暴露 query                                                       
+                                                                                 
+  // createUserSettings.svelte.ts                                                
+  export function createUserSettings() {                                         
+    const userSettingsQuery = createQuery(() => ({                               
+      queryKey: ['settings', 'user'],                                            
+      queryFn: async (): Promise<UserSettings> => {                              
+        const result = await settingsCommands.getUserSettings();                 
+        if (result.status === 'error') {                                         
+          throw new Error(result.error);                                         
+        }                                                                        
+        return result.data;                                                      
+      },                                                                         
+      staleTime: 1000 * 60 * 5,                                                  
+    }));                                                                         
+                                                                                 
+    const updateUserSetting = createMutation(() => ({                            
+      mutationFn: async ({ path, value }: { path: string; value: JsonValue }) => 
+  {                                                                              
+        const result = await settingsCommands.updateUserSetting(path, value);    
+        if (result.status === 'error') {                                         
+          throw new Error(result.error);                                         
+        }                                                                        
+        return result.data;                                                      
+      },                                                                         
+      onSuccess: () => {                                                         
+        queryClient.invalidateQueries({ queryKey: ['settings', 'user'] });       
+      },                                                                         
+    }));                                                                         
+                                                                                 
+    return {                                                                     
+      // ✅ 直接暴露 query 对象                                                  
+      query: userSettingsQuery,                                                  
+                                                                                 
+      updateUserSetting: (path: string, value: JsonValue) => {                   
+        updateUserSetting.mutate({ path, value });                               
+      },                                                                         
+    };                                                                           
+  }                                                                              
+                                                                                 
+  组件中使用                                                                     
+                                                                                 
+  <script>                                                                       
+    const { query, updateUserSetting } = createUserSettings();                   
+                                                                                 
+    // ✅ 直接访问 query.data，响应式正常工作                                    
+    const isConfigured = $derived(                                               
+      !!(                                                                        
+        query.data?.ai?.current_stt_provider &&                                  
+        query.data?.ai?.current_stt_model                                        
+      )                                                                          
+    );                                                                           
+                                                                                 
+    const handleSelectProvider = (provider: string) => {                         
+      updateUserSetting("ai.current_stt_provider", provider);                    
+    };                                                                           
+  </script>                                                                      
+                                                                                 
+  <div>                                                                          
+    {query.data?.ai?.current_stt_provider}                                       
+    <!-- 响应式更新正常 -->                                                      
+  </div>                                                                         
+                                                                                 
+  快速测试方法                                                                   
+                                                                                 
+  <script>                                                                       
+    let count = $state(0);                                                       
+                                                                                 
+    // ❌ 断掉响应式                                                             
+    let getCount = () => count;                                                  
+    let double1 = getCount() * 2;  // 不会更新                                   
+                                                                                 
+    // ✅ 正常响应式                                                             
+    let double2 = $derived(count * 2);  // 会更新                                
+  </script>                                                                      
+                                                                                 
+  <button onclick={() => count++}>                                               
+    Count: {count}                                                               
+  </button>                                                                      
+                                                                                 
+  <p>Double 1 (断掉): {double1}</p>                                              
+  <p>Double 2 (正常): {double2}</p>                                              
+                                                                                 
+  关键要点总结                                                                   
+                                                                                 
+  1. 保持代理链完整：不要在中间插入返回普通对象的函数                            
+  2. 避免解构：let { name } = state 会断掉响应式                                 
+  3. 避免外部引用：let ref = state.obj 不会响应式更新                            
+  4. 直接访问：使用 $derived(state.obj.prop) 而不是中间函数                      
+  5. 返回响应式对象：如果必须通过函数返回，返回整个响应式对象而不是内部值        
+                                                                                 
+  TanStack Query v6 + Svelte 5 注意事项                                          
+                                                                                 
+  - Query 对象本身是响应式的                                                     
+  - 直接访问 query.data、query.isLoading 等属性                                  
+  - 不要通过 getter 包装 query.data                                              
+  - 直接暴露 query 对象，保持响应式链路完整

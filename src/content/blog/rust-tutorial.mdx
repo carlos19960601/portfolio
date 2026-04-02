@@ -103,3 +103,175 @@ println!("{:?}", p);        // Point { x: 10, y: 20 }
 // 美化 Debug 格式
 println!("{:#?}", p);       // 更易读的多行格式
 ```
+
+
+## rust 中 std::sync::Arc 的作用是什么？
+
+`std::sync::Arc` 是 Rust 中的原子引用计数智能指针，全称 "Atomically Reference Counted"。
+
+主要作用
+
+多线程间共享数据的所有权
+
+当需要在多个线程之间共享同一份数据时，Arc 允许多个所有者同时持有该数据，通过原子操作安全地跟踪引用数量。
+
+关键特点
+
+1. 线程安全 - 内部使用原子操作，可以安全地在线程间传递
+2. 引用计数 - 跟踪有多少个所有者，当计数归零时自动释放数据
+3. 共享只读访问 - 提供数据的不可变访问（如需可变访问需配合 Mutex 或 RwLock）
+
+与 Rc 的区别
+┌──────────┬──────────────────┬────────┐
+│   特性   │      Arc<T>      │ Rc<T>  │
+├──────────┼──────────────────┼────────┤
+│ 线程安全 │ ✅ 是            │ ❌ 否  │
+├──────────┼──────────────────┼────────┤
+│ 性能     │ 较慢（原子操作） │ 较快   │
+├──────────┼──────────────────┼────────┤
+│ 使用场景 │ 多线程           │ 单线程 │
+└──────────┴──────────────────┴────────┘
+典型用法示例
+
+```rust
+use std::sync::{Arc, Mutex};
+use std::thread;
+
+fn main() {
+    let data = Arc::new(Mutex::new(vec![1, 2, 3]));
+
+    let mut handles = vec![];
+
+    for i in 0..3 {
+        let data_clone = Arc::clone(&data);
+        let handle = thread::spawn(move || {
+            let mut data = data_clone.lock().unwrap();
+            data.push(i);
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    println!("{:?}", *data.lock().unwrap());
+}
+```
+
+这里 Arc 让多个线程共享同一个 Mutex 保护的数据。
+
+
+## rust 中 std::sync::Arc 的作用是什么？ 
+
+⏺ `std::sync::Arc` 是 Rust 中的原子引用计数智能指针，全称 "Atomically Reference Counted"。
+
+主要作用
+
+多线程间共享数据的所有权
+
+当需要在多个线程之间共享同一份数据时，Arc 允许多个所有者同时持有该数据，通过原子操作安全地跟踪引用数量。
+
+关键特点
+
+1. 线程安全 - 内部使用原子操作，可以安全地在线程间传递
+2. 引用计数 - 跟踪有多少个所有者，当计数归零时自动释放数据
+3. 共享只读访问 - 提供数据的不可变访问（如需可变访问需配合 Mutex 或 RwLock）
+
+与 Rc 的区别
+┌──────────┬──────────────────┬────────┐
+│   特性   │      Arc<T>      │ Rc<T>  │
+├──────────┼──────────────────┼────────┤
+│ 线程安全 │ ✅ 是            │ ❌ 否  │
+├──────────┼──────────────────┼────────┤
+│ 性能     │ 较慢（原子操作） │ 较快   │
+├──────────┼──────────────────┼────────┤
+│ 使用场景 │ 多线程           │ 单线程 │
+└──────────┴──────────────────┴────────┘
+典型用法示例
+
+```rust
+use std::sync::{Arc, Mutex};
+use std::thread;
+
+fn main() {
+    let data = Arc::new(Mutex::new(vec![1, 2, 3]));
+
+    let mut handles = vec![];
+
+    for i in 0..3 {
+        let data_clone = Arc::clone(&data);
+        let handle = thread::spawn(move || {
+            let mut data = data_clone.lock().unwrap();
+            data.push(i);
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    println!("{:?}", *data.lock().unwrap());
+}
+```
+
+这里 Arc 让多个线程共享同一个 Mutex 保护的数据。
+
+❯ Vec[f32] 和 &[f32] 是可以转换的吗？  
+
+⏺ 是的，它们可以双向转换，而且非常方便。
+
+Vec<f32> → &[f32] (零成本转换)
+
+let vec = vec![1.0, 2.0, 3.0];
+
+// 方式1: 自动解引用
+let slice: &[f32] = &vec;
+
+// 方式2: 显式方法
+let slice: &[f32] = vec.as_slice();
+
+// 方式3: 可变切片
+let mut_slice: &mut [f32] = vec.as_mut_slice();
+
+&[f32] → Vec<f32> (需要复制)
+
+let slice: &[f32] = &[1.0, 2.0, 3.0];
+
+// 方式1: to_vec() - 最常用
+let vec: Vec<f32> = slice.to_vec();
+
+// 方式2: to_owned() - 语义相同
+let vec: Vec<f32> = slice.to_owned();
+
+// 方式3: 手动分配
+let vec: Vec<f32> = slice.to_vec(); // 或 Vec::from(slice)
+
+实际应用示例
+
+// 函数接受切片引用（更通用）
+fn process(data: &[f32]) {
+    println!("{:?}", data);
+}
+
+let vec = vec![1.0, 2.0, 3.0];
+process(&vec);  // 自动转换
+
+// 函数返回 Vec
+fn double(data: &[f32]) -> Vec<f32> {
+    data.iter().map(|x| x * 2.0).collect()
+}
+
+let slice = &[1.0, 2.0, 3.0];
+let result = double(slice);
+
+关键点
+┌───────────────┬────────┬──────────────┐
+│   转换方向    │  成本  │     说明     │
+├───────────────┼────────┼──────────────┤
+│ Vec<T> → &[T] │ 零成本 │ 只是借用指针 │
+├───────────────┼────────┼──────────────┤
+│ &[T] → Vec<T> │ O(n)   │ 需要复制数据 │
+└───────────────┴────────┴──────────────┘
+Vec 内部本质上就是指向堆上连续内存的指针、容量和长度，所以转为切片非常自然。
